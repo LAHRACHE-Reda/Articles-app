@@ -1,0 +1,37 @@
+Gradle files
+.gradle
+/build/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Compiled class files
+bin/
+build/
+out/
+classes/
+target/
+
+# Log files
+*.log
+logs/
+
+# Dependency directories
+lib/
+jars/
+
+# Miscellaneous
+*.class
+*.jar
+*.war
+*.zip
+*.tar.gz
+*.tar
+*.bak
+*.swp
+
+.gradle/
+*.lock
