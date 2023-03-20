@@ -1,2 +1,3 @@
 rootProject.name = 'articles-app'
 
+include 'articles-app-backend'
