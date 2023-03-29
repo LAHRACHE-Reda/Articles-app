@@ -33,5 +33,14 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    test {
+        useJUnitPlatform()
+
+        testLogging {
+            // You can customize the test output using these options
+            events 'PASSED', 'FAILED', 'SKIPPED', 'STANDARD_ERROR', 'STANDARD_OUT'
+            showStandardStreams = true
+            exceptionFormat = 'full'
+        }
+    }
 }
