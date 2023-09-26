@@ -7,13 +7,17 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  JAVA_HOME: '/usr/lib/jvm/java-17-openjdk-amd64'
+
 stages:
   - stage: Build
     jobs:
       - job: Build
         steps:
-          - script: 'gradle clean build'
-            displayName: 'Build with Gradle'
+          - script: |
+              echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+            displayName: 'Set JAVA_HOME variable'
 
           - task: PublishBuildArtifacts@1
             inputs:
@@ -25,10 +29,6 @@ stages:
     jobs:
       - job: Deploy
         steps:
-          - task: AzureRmWebAppDeployment@4
-            inputs:
-              ConnectionType: 'AzureRM'
-              appType: 'webAppLinux'
-              WebAppName: 'RedaLahrache'
-              packageForLinux: '$(Pipeline.Workspace)/drop/*.jar'
-              RuntimeStack: 'TOMCAT|8.5-jre11'
+          - script: |
+              echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+            displayName: 'Set JAVA_HOME variable'
