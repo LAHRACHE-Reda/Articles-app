@@ -44,3 +44,4 @@ stages:
               WebAppName: 'RedaLahrache'
               packageForLinux: '$(Pipeline.Workspace)/drop/*.jar'
               RuntimeStack: 'TOMCAT|8.5-jre11'
+
