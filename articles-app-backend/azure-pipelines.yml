@@ -1,0 +1,55 @@
+trigger:
+  - develop
+
+pr:
+  - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  JAVA_HOME: '/usr/lib/jvm/java-17-openjdk-amd64'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - task: UseJavaVersion@0
+            inputs:
+              versionSpec: '17'
+              installationPath: $(JAVA_HOME)
+              failIfNotFound: true
+              addToPath: true
+
+          - script: 'gradle clean build'
+            displayName: 'Build with Gradle'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: '$(Build.SourcesDirectory)/build/libs'
+              artifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: Deploy
+    jobs:
+      - deployment: DeployToAzureWebApp
+        environment: 'DevEnv'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: UseJavaVersion@0
+                  inputs:
+                    versionSpec: '17'
+                    installationPath: $(JAVA_HOME)
+                    failIfNotFound: true
+                    addToPath: true
+
+                - task: AzureRmWebAppDeployment@4
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    appType: 'webAppLinux'
+                    WebAppName: 'RedaLahrache'
+                    packageForLinux: '$(Pipeline.Workspace)/drop/*.jar'
+                    RuntimeStack: 'TOMCAT|8.5-jre11'
