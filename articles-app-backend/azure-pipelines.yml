@@ -12,12 +12,6 @@ stages:
     jobs:
       - job: Build
         steps:
-          - task: UseJavaVersion@0
-            inputs:
-              versionSpec: '17'
-              installationPath: 'default'  # Use the default installation path
-              failIfNotFound: true
-
           - script: 'gradle clean build'
             displayName: 'Build with Gradle'
 
@@ -31,12 +25,6 @@ stages:
     jobs:
       - job: Deploy
         steps:
-          - task: UseJavaVersion@0
-            inputs:
-              versionSpec: '17'
-              installationPath: 'default'
-              failIfNotFound: true
-
           - task: AzureRmWebAppDeployment@4
             inputs:
               ConnectionType: 'AzureRM'
