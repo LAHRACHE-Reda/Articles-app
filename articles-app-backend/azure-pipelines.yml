@@ -1,0 +1,46 @@
+trigger:
+  - develop
+
+pr:
+  - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - task: UseJavaVersion@0
+            inputs:
+              versionSpec: '17'
+              installationPath: 'default'  # Use the default installation path
+              failIfNotFound: true
+
+          - script: 'gradle clean build'
+            displayName: 'Build with Gradle'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathtoPublish: '$(Build.SourcesDirectory)/build/libs'
+              artifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: Deploy
+    jobs:
+      - job: Deploy
+        steps:
+          - task: UseJavaVersion@0
+            inputs:
+              versionSpec: '17'
+              installationPath: 'default'
+              failIfNotFound: true
+
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              appType: 'webAppLinux'
+              WebAppName: 'RedaLahrache'
+              packageForLinux: '$(Pipeline.Workspace)/drop/*.jar'
+              RuntimeStack: 'TOMCAT|8.5-jre11'
