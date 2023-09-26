@@ -7,16 +7,17 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  JAVA_HOME: '/usr/lib/jvm/java-17-openjdk-amd64'
+
 stages:
   - stage: Build
     jobs:
       - job: Build
         steps:
-          - task: UseJavaVersion@0
-            inputs:
-              versionSpec: '17'
-              installationPath: 'default'  # Use the default installation path
-              failIfNotFound: true
+          - script: |
+              echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+            displayName: 'Set JAVA_HOME variable'
 
           - script: 'gradle clean build'
             displayName: 'Build with Gradle'
@@ -31,11 +32,9 @@ stages:
     jobs:
       - job: Deploy
         steps:
-          - task: UseJavaVersion@0
-            inputs:
-              versionSpec: '17'
-              installationPath: 'default'
-              failIfNotFound: true
+          - script: |
+              echo "##vso[task.setvariable variable=JAVA_HOME]$JAVA_HOME"
+            displayName: 'Set JAVA_HOME variable'
 
           - task: AzureRmWebAppDeployment@4
             inputs:
